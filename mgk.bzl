@@ -108,7 +108,8 @@ def define_mgk(
         symbol_list,
         dtb_files = None,
         dtbo_config = None,
-        clang_autofdo_profile = None):
+        clang_autofdo_profile = None,
+        strip_user_device_modules = False):
     mgk_defconfig_overlays = []
     for o in DEFCONFIG_OVERLAYS.split(" "):
         if o != "":
@@ -250,7 +251,7 @@ def define_mgk(
                 make_goals = [
                     "modules",
                 ] + (["dtbs"] if dtb_files else []),
-                strip_modules = False,
+                strip_modules = strip_user_device_modules and build == "user",
                 base_kernel = select({
                     "//build/bazel_mgk_rules:kernel_version_6.1"     : "//{}-{}:kernel_aarch64_debug".format(ack_dir, "6.1"),
                     "//build/bazel_mgk_rules:kernel_version_6.6"     : "//{}-{}:kernel_aarch64_debug".format(ack_dir, "6.6"),
