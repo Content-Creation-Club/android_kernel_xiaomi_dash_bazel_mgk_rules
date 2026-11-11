@@ -110,7 +110,9 @@ def define_mgk(
         dtbo_config = None,
         clang_autofdo_profile = None,
         strip_user_device_modules = False,
-        user_core_implicit_outs = []):
+        user_core_implicit_outs = [],
+        user_defconfig_fragments = [],
+        user_gki_modules = []):
     mgk_defconfig_overlays = []
     for o in DEFCONFIG_OVERLAYS.split(" "):
         if o != "":
@@ -226,8 +228,9 @@ def define_mgk(
                 strip_modules=True,
                 outs = DEFAULT_GKI_OUTS,
                 implicit_outs = user_core_implicit_outs if build == "user" else [],
+                defconfig_fragments = user_defconfig_fragments if build == "user" else [],
                 module_outs = common_eng_modules if ack_build == "eng" else common_userdebug_modules if ack_build == "userdebug" else common_user_modules if ack_build == "user" else [],
-                module_implicit_outs = common_modules if ack_build == "ack" else [],
+                module_implicit_outs = (common_modules if ack_build == "ack" else []) + (user_gki_modules if build == "user" else []),
                 base_kernel = None,
                 trim_nonlisted_kmi = False,
             )
@@ -247,8 +250,9 @@ def define_mgk(
                     ".config",
                 ] + (dtb_files or []),
                 module_outs = common_eng_modules if build == "eng" else common_userdebug_modules if build == "userdebug" else [],
-                module_implicit_outs = common_user_modules if build == "user" else [],
+                module_implicit_outs = common_user_modules + user_gki_modules if build == "user" else [],
                 build_config = ":{}_build_config.{}".format(name, build),
+                defconfig_fragments = user_defconfig_fragments if build == "user" else [],
                 kconfig_ext = ":Kconfig.ext",
                 make_goals = [
                     "modules",
