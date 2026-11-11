@@ -109,7 +109,8 @@ def define_mgk(
         dtb_files = None,
         dtbo_config = None,
         clang_autofdo_profile = None,
-        strip_user_device_modules = False):
+        strip_user_device_modules = False,
+        user_core_implicit_outs = []):
     mgk_defconfig_overlays = []
     for o in DEFCONFIG_OVERLAYS.split(" "):
         if o != "":
@@ -224,6 +225,7 @@ def define_mgk(
                 ],
                 strip_modules=True,
                 outs = DEFAULT_GKI_OUTS,
+                implicit_outs = user_core_implicit_outs if build == "user" else [],
                 module_outs = common_eng_modules if ack_build == "eng" else common_userdebug_modules if ack_build == "userdebug" else common_user_modules if ack_build == "user" else [],
                 module_implicit_outs = common_modules if ack_build == "ack" else [],
                 base_kernel = None,
